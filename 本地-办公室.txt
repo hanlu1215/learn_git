@@ -1,0 +1,43 @@
+这是一个用于学习 Git 的文件。在这里，我们可以记录一些关于 Git 的基本操作和使用技巧。
+
+1. 初始化一个新的 Git 仓库：
+    ```
+    git init
+    ```
+
+2. 克隆一个现有的仓库：
+    ```
+    git clone <repository_url>
+    ```
+
+3. 查看当前仓库的状态：
+    ```
+    git status
+    ```
+
+4. 添加文件到暂存区：
+    ```
+    git add <file_name>
+    ```
+
+5. 提交更改：
+    ```
+    git commit -m "提交信息"
+    ```
+
+6. 查看提交历史：
+    ```
+    git log
+    ```
+
+7. 推送更改到远程仓库：
+    ```
+    git push origin <branch_name>
+    ```
+
+8. 拉取远程仓库的更改：
+    ```
+    git pull origin <branch_name>
+    ```
+
+希望这些基本命令能帮助你更好地使用 Git 进行版本控制。
