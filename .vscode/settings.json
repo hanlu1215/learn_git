@@ -1,6 +1,10 @@
 {
     "files.associations": {
         "vector": "cpp",
-        "istream": "cpp"
+        "istream": "cpp",
+        "xlocbuf": "cpp",
+        "filesystem": "cpp",
+        "cmath": "cpp",
+        "ostream": "cpp"
     }
 }

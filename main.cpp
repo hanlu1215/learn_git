@@ -1,27 +1,36 @@
 #include <iostream>
-#include <xlnt/xlnt.hpp>
+#include <cmath>
+
+void drawCircle(int radius) {
+    const double aspect_ratio = 2.0; // Adjust for console character proportions
+    const char fill_char = '*';     // Character to draw the circle
+    const char empty_char = ' ';    // Character for empty space
+
+    for (int y = -radius; y <= radius; ++y) {
+        for (int x = -radius * aspect_ratio; x <= radius * aspect_ratio; ++x) {
+            double distance = std::sqrt((x / aspect_ratio) * (x / aspect_ratio) + y * y);
+            if (distance > radius - 0.5 && distance < radius + 0.5) {
+                std::cout << fill_char;
+            } else {
+                std::cout << empty_char;
+            }
+        }
+        std::cout << std::endl;
+    }
+}
 
 int main() {
-    try {
-        // 创建一个工作簿对象
-        xlnt::workbook wb;
+    int radius;
+    std::cout << "Enter the radius of the circle: ";
+    std::cin >> radius;
 
-        // 加载 Excel 文件
-        wb.load("test.xlsx");
-
-        // 获取第一个工作表
-        auto ws = wb.active_sheet();
-
-        // 遍历工作表中的每一行和每一列
-        for (auto row : ws.rows(false)) {
-            for (auto cell : row) {
-                std::cout << cell.to_string() << "\t";
-            }
-            std::cout << std::endl;
-        }
-    } catch (const std::exception &e) {
-        std::cerr << "Error: " << e.what() << std::endl;
+    if (radius > 0) {
+        drawCircle(radius);
+    } else {
+        std::cout << "Radius must be a positive integer!" << std::endl;
     }
-
+    std::cout << "Press any key to exit..." << std::endl;
+    std::cin.ignore();
+    std::cin.get();
     return 0;
 }
