@@ -28,6 +28,6 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 set(LIBS
     ${OpenCV_LIBS})
 
-add_executable(main ${PROJECT_SOURCE_DIR}/src/main.cpp)
+add_executable(main ${PROJECT_SOURCE_DIR}/src/merge_video.cpp)
 # 链接库
 target_link_libraries(main ${LIBS})
