@@ -1,5 +1,7 @@
 *.xlsx
 *.exe
 build/
+bin/
 .vscode/
 opencv-4.11.0.zip
+CMakeLists.txt
