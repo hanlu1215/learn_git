@@ -25,6 +25,24 @@ std::string openFileDialog() {
     }
 }
 
+// Global variable to store the current frame
+cv::Mat currentFrame;
+
+// Mouse callback function to save the current frame on left button click
+void onMouse(int event, int x, int y, int flags, void* userdata) {
+    if (event == cv::EVENT_LBUTTONDOWN) { // Left mouse button click
+        std::string outputDir = *(std::string*)userdata;
+        std::string outputFileName = outputDir + "/saved_frame_" + std::to_string(cv::getTickCount()) + ".png";
+        if (!currentFrame.empty()) {
+            if (cv::imwrite(outputFileName, currentFrame)) {
+                std::cout << "Saved frame to: " << outputFileName << std::endl;
+            } else {
+                std::cerr << "Error: Could not save frame to " << outputFileName << std::endl;
+            }
+        }
+    }
+}
+
 int main() {
     // 获取当前路径并打印
     std::string currentPath = fs::current_path().string();
@@ -38,44 +56,52 @@ int main() {
     }
     std::cout << "Selected video file: " << videoFile << std::endl;
 
-    // Create the output directory if it doesn't exist
-    std::string outputDir = currentPath+"\\img";
-    
-    if (!fs::exists(outputDir)) {
-        fs::create_directory(outputDir);
-    }
-
     cv::VideoCapture cap(videoFile);
     if (!cap.isOpened()) {
         std::cerr << "Error: Could not open video file." << std::endl;
         return -1;
     }
 
-    int frameIndex = 0;
-    int maxFrames = 10; // Maximum number of frames to save
-    cv::Mat frame;
+    // 创建窗口并设置为可调整大小
+    cv::namedWindow("HLL VideoPlayer", cv::WINDOW_NORMAL);
 
-    while (frameIndex < maxFrames) {
+    // 设置窗口大小为 720p (1280x720)
+    int windowWidth = 1280;
+    int windowHeight = 720;
+    cv::resizeWindow("HLL VideoPlayer", windowWidth, windowHeight);
+
+    // 获取屏幕分辨率并将窗口移动到屏幕中央
+    int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+    int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+    int windowX = (screenWidth - windowWidth) / 2;
+    int windowY = (screenHeight - windowHeight) / 2;
+    cv::moveWindow("HLL VideoPlayer", windowX, windowY);
+
+    // 设置鼠标回调函数
+    std::string outputDir = currentPath + "\\img";
+    if (!fs::exists(outputDir)) {
+        fs::create_directory(outputDir);
+    }
+    cv::setMouseCallback("HLL VideoPlayer", onMouse, &outputDir);
+
+    cv::Mat frame;
+    while (true) {
         cap >> frame; // Read the next frame
         if (frame.empty()) {
             break; // Exit the loop if no more frames
         }
 
-        // Construct the output file name
-        std::string videoBaseName = fs::path(videoFile).stem().string();
-        std::string outputFileName = outputDir + "/" + videoBaseName + "_frame_" + std::to_string(frameIndex) + ".png";
-        // Save the frame as an image
-        if (!cv::imwrite(outputFileName, frame)) {
-            std::cerr << "Error: Could not save frame to " << outputFileName << std::endl;
-            return -1;
-        }
+        // 更新当前帧
+        currentFrame = frame.clone();
 
-        std::cout << "Saved: " << outputFileName << std::endl;
-        frameIndex++;
+        // 播放视频
+        cv::imshow("HLL VideoPlayer", frame);
+
+        // 等待 30ms，按下任意键退出
+        if (cv::waitKey(30) >= 0) {
+            break;
+        }
     }
 
-    std::cout << "First " << maxFrames << " video frames have been saved to the '" << outputDir << "' directory." << std::endl;
-    std::cout << "Press any key to exit..." << std::endl;
-    std::cin.get();
     return 0;
 }
